@@ -1,18 +1,24 @@
-﻿#define _CRT_SECURE_NO_WARNINGS
+﻿//Academy
+#define _CRT_SECURE_NO_WARNINGS
 #include<iostream>
 #include<string>
 #include<ctime>
-using namespace std;
+#include<fstream>
+#include <vector>
 
-#define HUMAN_TAKE_PARAMETERS 	const std::string& last_name,const std::string& first_name,\
- int year, int month, int day
+using namespace std;
+#define HOME_WORK_ENTER_TO_FILE
+#define HOME_WORK_READ_FROM_FILE
+//#define CLASS_WORK_1
+
+#define HUMAN_TAKE_PARAMETERS	const std::string& last_name, const std::string& first_name, int year, int month, int day
 #define HUMAN_GIVE_PARAMETERS	last_name, first_name, year, month, day
 
 class Human
 {
 	std::string last_name;
 	std::string first_name;
-	tm birth_date;	//tm - timepoint  
+	tm birth_date;	//tm - timepoint
 public:
 	const std::string& get_last_name()const
 	{
@@ -65,11 +71,16 @@ public:
 	}
 
 	//					Methods:
-	virtual void info()const
+	virtual std::ostream& info(std::ostream& os)const
 	{
-		cout << last_name << " " << first_name << " " << get_age() << endl;
+		return os << last_name << " " << first_name << " " << get_age();
 	}
 };
+
+std::ostream& operator<<(std::ostream& os, const Human& obj)
+{
+	return obj.info(os);
+}
 
 #define STUDENT_TAKE_PARAMETERS	const std::string& specialty, const std::string& group, double rating, double attendance
 #define STUDENT_GIVE_PARAMETERS	specialty, group, rating, attendance
@@ -139,10 +150,9 @@ public:
 	{
 		cout << "SDestructor:\t" << this << endl;
 	}
-	void info()const
+	std::ostream& info(std::ostream& os)const
 	{
-		Human::info();
-		cout << specialty << " " << group << " " << rating << " " << attendance << endl;
+		return Human::info(os) << " " << specialty << " " << group << " " << rating << " " << attendance;
 	}
 };
 
@@ -181,10 +191,9 @@ public:
 		cout << "TDestructor:\t" << this << endl;
 	}
 
-	void info()const
+	std::ostream& info(std::ostream& os)const
 	{
-		Human::info();
-		cout << specialty << " " << experience << " ëåò.\n";
+		return Human::info(os) << " " << specialty << " " << experience << " ëåò.";
 	}
 };
 
@@ -210,10 +219,9 @@ public:
 	{
 		cout << "GDestructor:\t" << this << endl;
 	}
-	void info()const
+	std::ostream& info(std::ostream& os)const
 	{
-		Student::info();
-		cout << subject << endl;
+		return Student::info(os) << " " << subject;
 	}
 };
 
@@ -259,6 +267,7 @@ void main()
 	2. Virtual methods;
 	*/
 
+#ifdef CLASS_WORK_1
 	Human* group[] =
 	{
 		new Student("Pinkman", "Jessie", 1990, 03,04, "Chemistry", "WW_220", 90, 95),
@@ -268,9 +277,11 @@ void main()
 		new Teacher("Diaz", "Ricardo", 1960, 03,03, "Weapons distribution", 20)
 	};
 
+
 	for (int i = 0; i < sizeof(group) / sizeof(group[0]); i++)
 	{
-		group[i]->info();
+		//group[i]->info();
+		cout << *group[i] << endl;
 		cout << "\n--------------------------------------------\n";
 	}
 
@@ -278,5 +289,59 @@ void main()
 	{
 		delete group[i];
 	}
+#endif // CLASS_WORK_1
 
+
+
+
+#ifdef HOME_WORK_ENTER_TO_FILE 
+	Human* group[] =
+	{
+		new Student("Pinkman", "Jessie", 1990, 03,04, "Chemistry", "WW_220", 90, 95),
+		new Teacher("White", "Walter", 1960, 9, 20, "Chemistry", 25),
+		new Graduate("Schrader", "Hank", 1970, 06,07, "Criminalistic", "WW_220", 75, 80, "How to catch Heizenberg"),
+		new Student("Vercetty", "Tomas", 1970, 05, 25, "Criminalistic", "Vice", 90, 95),
+		new Teacher("Diaz", "Ricardo", 1960, 03,03, "Weapons distribution", 20)
+	};
+
+
+	for (int i = 0; i < sizeof(group) / sizeof(group[0]); i++)
+	{
+		//group[i]->info();
+		cout << *group[i] << endl;
+		cout << "\n--------------------------------------------\n";
+	}
+
+
+	char filename[] = { "GROUP.txt" };//макс длинна файла
+	ofstream fout;/*1) создаем поток*/
+	fout.open(filename, std::ios_base::app);/*2) открываем поток, ios - добавляется в конец файла*/
+
+	for (int i = 0; i < sizeof(group) / sizeof(group[0]); i++)
+	{
+		//group[i]->info();
+		fout << *group[i] << endl;
+		fout << "\n--------------------------------------------\n";
+	}
+
+
+	fout.close();/*3) закрываем поток*/
+	char sz_command[_MAX_FNAME] = "notepad ";/*инициализация строки значением notepad(загружаем строку в переменную)*/
+	strcat_s(sz_command, _MAX_FNAME, filename);/*склеиваем строку с нотепад и названием имени*/
+	system(sz_command);/*открываем тот же файл что и создали*/
+	for (int i = 0; i < sizeof(group) / sizeof(group[0]); i++)
+	{
+		delete group[i];
+	}
+
+
+#endif // HOME_WORK_ENTER_TO_FILE 
+
+
+#ifdef HOME_WORK_READ_FROM_FILE
+	
+
+#endif // HOME_WORK_READ_FROM_FILE
+
+	
 }
